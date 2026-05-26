@@ -11,6 +11,13 @@
                     <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
                 @endif
 
+                <div class="flex justify-end mb-4">
+                    <a href="{{ route('admin.doctor.create') }}"
+                    class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        + Add Doctor
+                    </a>
+                </div>
+
                 @if($doctors->isEmpty())
                     <p class="text-gray-500">No doctors registered yet.</p>
                 @else

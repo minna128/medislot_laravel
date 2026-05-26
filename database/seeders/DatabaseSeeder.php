@@ -6,6 +6,7 @@ use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Doctor;
 use App\Models\Patient;
+use App\Models\Clinic;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,12 +22,12 @@ class DatabaseSeeder extends Seeder
 
         // Doctor 1
         $doctor1 = User::create([
-            'name'     => 'Dr. Sarah Lee',
+            'name'     => 'Sarah Lee',
             'email'    => 'doctor@medislot.com',
             'password' => bcrypt('password'),
             'role'     => 'doctor',
         ]);
-        Doctor::create([
+        $doc1 = Doctor::create([
             'user_id'         => $doctor1->id,
             'specialization'  => 'Cardiologist',
             'qualifications'  => 'MBBS, MD Cardiology',
@@ -37,12 +38,12 @@ class DatabaseSeeder extends Seeder
 
         // Doctor 2
         $doctor2 = User::create([
-            'name'     => 'Dr. James Wong',
+            'name'     => 'James Wong',
             'email'    => 'doctor2@medislot.com',
             'password' => bcrypt('password'),
             'role'     => 'doctor',
         ]);
-        Doctor::create([
+        $doc2 = Doctor::create([
             'user_id'         => $doctor2->id,
             'specialization'  => 'General Practitioner',
             'qualifications'  => 'MBBS',
@@ -64,5 +65,17 @@ class DatabaseSeeder extends Seeder
             'address'       => '123 Main Street, KL',
             'date_of_birth' => '1995-06-15',
         ]);
+
+        // Clinic
+        $clinic = Clinic::create([
+            'name'        => 'MediSlot Main Clinic',
+            'location'    => 'No. 1, Jalan Sehat, Kuala Lumpur',
+            'phone'       => '03-12345678',
+            'hours'       => 'Mon-Sat 8am-6pm',
+            'description' => 'Our flagship clinic providing comprehensive healthcare services including cardiology and general practice.',
+        ]);
+
+        // Assign both doctors to the clinic
+        $clinic->doctors()->attach([$doc1->id, $doc2->id]);
     }
 }

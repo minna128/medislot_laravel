@@ -7,6 +7,8 @@ use App\Models\Appointment;
 use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\User;
+use App\Models\Clinic;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -16,8 +18,9 @@ class AdminController extends Controller
         $totalPatients     = Patient::count();
         $totalAppointments = Appointment::count();
         $pendingCount      = Appointment::where('status', 'pending')->count();
+        $totalClinics      = Clinic::count();
         return view('admin.dashboard', compact(
-            'totalDoctors', 'totalPatients', 'totalAppointments', 'pendingCount'
+            'totalDoctors', 'totalPatients', 'totalAppointments', 'pendingCount', 'totalClinics'
         ));
     }
 
@@ -68,4 +71,144 @@ class AdminController extends Controller
         $patient->delete();
         return back()->with('success', 'Patient deleted.');
     }
-}
+
+    public function createDoctor()
+    {
+        return view('admin.create-doctor');
+    }
+
+    public function storeDoctor(Request $request)
+    {
+        $request->validate([
+            'name'            => 'required|string|max:255',
+            'email'           => 'required|email|unique:users,email',
+            'password'        => 'required|min:8',
+            'specialization'  => 'nullable|string|max:255',
+            'qualifications'  => 'nullable|string|max:255',
+            'clinic_location' => 'nullable|string|max:255',
+            'phone'           => 'nullable|string|max:20',
+            'availability'    => 'nullable|string|max:255',
+        ]);
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+            'role'     => 'doctor',
+        ]);
+
+        Doctor::create([
+            'user_id'         => $user->id,
+            'specialization'  => $request->specialization,
+            'qualifications'  => $request->qualifications,
+            'clinic_location' => $request->clinic_location,
+            'phone'           => $request->phone,
+            'availability'    => $request->availability,
+        ]);
+
+        return redirect()->route('admin.doctors')->with('success', 'Doctor created successfully.');
+    }
+
+    public function createPatient()
+    {
+        return view('admin.create-patient');
+    }
+
+    public function storePatient(Request $request)
+    {
+        $request->validate([
+            'name'          => 'required|string|max:255',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required|min:8',
+            'phone'         => 'nullable|string|max:20',
+            'address'       => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+        ]);
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+            'role'     => 'patient',
+        ]);
+
+        Patient::create([
+            'user_id'       => $user->id,
+            'phone'         => $request->phone,
+            'address'       => $request->address,
+            'date_of_birth' => $request->date_of_birth,
+        ]);
+
+        return redirect()->route('admin.patients')->with('success', 'Patient created successfully.');
+    }
+
+    
+
+    public function clinics()
+    {
+        $clinics = Clinic::with('doctors.user')->get();
+        return view('admin.clinics', compact('clinics'));
+    }
+
+    public function createClinic()
+    {
+        $doctors = Doctor::with('user')->get();
+        return view('admin.create-clinic', compact('doctors'));
+    }
+
+    public function storeClinic(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'phone'    => 'nullable|string|max:20',
+            'hours'    => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $clinic = Clinic::create($request->only([
+            'name', 'location', 'phone', 'hours', 'description'
+        ]));
+
+        if ($request->has('doctors')) {
+            $clinic->doctors()->sync($request->doctors);
+        }
+
+        return redirect()->route('admin.clinics')->with('success', 'Clinic created successfully.');
+    }
+
+        public function editClinic(Clinic $clinic)
+        {
+            $doctors = Doctor::with('user')->get();
+            return view('admin.edit-clinic', compact('clinic', 'doctors'));
+        }
+
+        public function updateClinic(Request $request, Clinic $clinic)
+        {
+            $request->validate([
+                'name'     => 'required|string|max:255',
+                'location' => 'required|string|max:255',
+                'phone'    => 'nullable|string|max:20',
+                'hours'    => 'nullable|string|max:255',
+                'description' => 'nullable|string',
+            ]);
+
+            $clinic->update($request->only([
+                'name', 'location', 'phone', 'hours', 'description'
+            ]));
+
+            if ($request->has('doctors')) {
+                $clinic->doctors()->sync($request->doctors);
+            } else {
+                $clinic->doctors()->detach();
+            }
+
+            return redirect()->route('admin.clinics')->with('success', 'Clinic updated successfully.');
+        }
+
+        public function deleteClinic(Clinic $clinic)
+        {
+            $clinic->delete();
+            return back()->with('success', 'Clinic deleted.');
+        }
+            }

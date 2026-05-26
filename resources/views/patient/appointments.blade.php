@@ -1,45 +1,100 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">My Appointments</h2>
+        <h2 class="font-semibold text-xl leading-tight" style="color:white;">My Appointments</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+    <div style="max-width:1200px; margin:0 auto; padding:32px 2rem;">
 
-                @if($appointments->isEmpty())
-                    <p class="text-gray-500">You have no appointments yet.</p>
-                @else
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b">
-                                <th class="py-2 px-4">Doctor</th>
-                                <th class="py-2 px-4">Date</th>
-                                <th class="py-2 px-4">Time</th>
-                                <th class="py-2 px-4">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($appointments as $appt)
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="py-2 px-4">{{ $appt->doctor->user->name }}</td>
-                                <td class="py-2 px-4">{{ $appt->appointment_date }}</td>
-                                <td class="py-2 px-4">{{ $appt->appointment_time }}</td>
-                                <td class="py-2 px-4">
-                                    <span class="px-2 py-1 rounded text-sm
-                                        {{ $appt->status === 'confirmed' ? 'bg-green-100 text-green-700' : '' }}
-                                        {{ $appt->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
-                                        {{ $appt->status === 'cancelled' ? 'bg-red-100 text-red-700' : '' }}">
-                                        {{ ucfirst($appt->status) }}
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @endif
-
+        @if(session('success'))
+            <div style="background:#dcfce7; color:#16a34a; padding:12px 20px; border-radius:10px; margin-bottom:20px; font-size:14px; font-weight:600;">
+                ✓ {{ session('success') }}
             </div>
+        @endif
+        @if(session('error'))
+            <div style="background:#fee2e2; color:#dc2626; padding:12px 20px; border-radius:10px; margin-bottom:20px; font-size:14px; font-weight:600;">
+                ✗ {{ session('error') }}
+            </div>
+        @endif
+
+        <div style="background:white; border-radius:14px; padding:28px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <h3 style="font-size:18px; font-weight:700; color:#0f172a;">My Appointments</h3>
+                <a href="{{ route('patient.book') }}"
+                   style="display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#1e3a8a,#0d9488); color:white; padding:10px 20px; border-radius:8px; font-size:14px; font-weight:600; text-decoration:none;">
+                    <i class="fa-regular fa-calendar-plus"></i> Book New
+                </a>
+            </div>
+
+            @if($appointments->isEmpty())
+                <div style="text-align:center; padding:48px; color:#6b7280;">
+                    <i class="fa-regular fa-calendar-xmark" style="font-size:40px; color:#ccfbf1; margin-bottom:16px; display:block;"></i>
+                    No appointments yet.
+                    <a href="{{ route('patient.book') }}" style="color:#0d9488; font-weight:600; display:block; margin-top:8px;">Book one now →</a>
+                </div>
+            @else
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #f0fdfa;">
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Doctor</th>
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Date</th>
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Time</th>
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Notes</th>
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Status</th>
+                            <th style="text-align:left; padding:12px 16px; font-size:12px; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:1px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($appointments as $appt)
+                        <tr style="border-bottom:1px solid #f0fdfa;">
+                            <td style="padding:14px 16px;">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($appt->doctor->user->name) }}&background=0d9488&color=fff&size=36&rounded=true"
+                                         style="width:36px; height:36px; border-radius:50%;">
+                                    <span style="font-size:14px; font-weight:600; color:#0f172a;">Dr. {{ $appt->doctor->user->name }}</span>
+                                </div>
+                            </td>
+                            <td style="padding:14px 16px; font-size:14px; color:#6b7280;">{{ $appt->appointment_date }}</td>
+                            <td style="padding:14px 16px; font-size:14px; color:#6b7280;">{{ $appt->appointment_time }}</td>
+                            <td style="padding:14px 16px; font-size:14px; color:#6b7280;">{{ $appt->notes ?? '-' }}</td>
+                            <td style="padding:14px 16px;">
+                                <span style="padding:4px 12px; border-radius:50px; font-size:12px; font-weight:600;
+                                    {{ $appt->status === 'confirmed' ? 'background:#dcfce7; color:#16a34a;' : '' }}
+                                    {{ $appt->status === 'pending' ? 'background:#fef9c3; color:#d97706;' : '' }}
+                                    {{ $appt->status === 'cancelled' ? 'background:#fee2e2; color:#dc2626;' : '' }}">
+                                    {{ ucfirst($appt->status) }}
+                                </span>
+                            </td>
+                            <td style="padding:14px 16px;">
+                                @if($appt->status === 'pending')
+                                    <form method="POST" action="{{ route('patient.appointment.cancel', $appt->id) }}"
+                                          onsubmit="return confirm('Cancel this appointment?')" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button style="background:#fee2e2; color:#dc2626; border:none; padding:6px 14px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">
+                                            <i class="fa-solid fa-xmark" style="margin-right:4px;"></i>Cancel
+                                        </button>
+                                    </form>
+                                @else
+                                    <span style="color:#d1d5db; font-size:13px;">—</span>
+                                @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @endif
         </div>
     </div>
+
+    <footer style="background:#0f172a; padding:24px 2rem; margin-top:48px;">
+        <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:18px; color:#2dd4bf;">✚</span>
+                <span style="font-size:16px; font-weight:700; color:white;">Medi<span style="color:#2dd4bf;">Slot</span></span>
+            </div>
+            <p style="color:#475569; font-size:13px;">© {{ date('Y') }} MediSlot. All rights reserved.</p>
+            <p style="color:#475569; font-size:13px;">Patient Portal</p>
+        </div>
+    </footer>
+
 </x-app-layout>
