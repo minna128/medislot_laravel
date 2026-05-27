@@ -79,7 +79,6 @@
     <footer style="background:#0f172a; padding:24px 2rem; margin-top:48px;">
         <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
             <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:18px; color:#2dd4bf;">✚</span>
                 <span style="font-size:16px; font-weight:700; color:white;">Medi<span style="color:#2dd4bf;">Slot</span></span>
             </div>
             <p style="color:#475569; font-size:13px;">© {{ date('Y') }} MediSlot. All rights reserved.</p>

@@ -1,15 +1,19 @@
 <nav x-data="{ open: false }" style="background:#0f172a; border-bottom:1px solid rgba(255,255,255,0.08);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}" style="display:flex; align-items:center; gap:8px; text-decoration:none;">
-                        <span style="font-size:20px; color:#2dd4bf;">✚</span>
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+                    <a href="{{ url('/') }}" style="display:flex; align-items:center; gap:8px; text-decoration:none;flex-shrink:0;">
+                        <svg width="32" height="32" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="44" height="44" rx="10" fill="#0d9488"/>
+                            <path d="M22 34s-14-9-14-18a8 8 0 0 1 14-5.3A8 8 0 0 1 36 16c0 9-14 18-14 18z" fill="white"/>
+                            <polyline points="8,22 14,22 17,16 20,28 23,20 26,24 30,24 36,24" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
                         <span style="font-size:18px; font-weight:700; color:white;">Medi<span style="color:#2dd4bf;">Slot</span></span>
                     </a>
-                </div>
+                
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden sm:flex items-center space-x-8"
+                    style="margin-left:48px;">
                     @if(auth()->user()->role === 'patient')
                         @php
                             $patientLinks = [
@@ -68,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
+            <div class="hidden sm:flex items-center">
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -85,9 +89,6 @@
                         <x-slot name="content">
                             <div class="block px-4 py-2 text-xs text-gray-400">{{ __('Manage Account') }}</div>
                             <x-dropdown-link href="{{ route('profile.show') }}">{{ __('Profile') }}</x-dropdown-link>
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
-                                <x-dropdown-link href="{{ route('api-tokens.index') }}">{{ __('API Tokens') }}</x-dropdown-link>
-                            @endif
                             <div class="border-t border-gray-200"></div>
                             <form method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf

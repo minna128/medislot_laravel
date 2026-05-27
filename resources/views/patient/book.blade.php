@@ -23,6 +23,12 @@
             </div>
         @endif
 
+        @if(session('error'))
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
         @if($errors->any())
             <div style="background:#fee2e2; color:#dc2626; padding:12px 20px; border-radius:10px; margin-bottom:20px; font-size:14px; font-weight:600;">
                 ✗ {{ $errors->first() }}
@@ -37,18 +43,28 @@
                 <div style="display:flex; flex-direction:column; gap:12px;">
                     @foreach($doctors as $doctor)
                     <div class="doctor-card"
-                         data-id="{{ $doctor->id }}"
-                         data-name="{{ $doctor->user->name }}"
-                         data-spec="{{ $doctor->specialization ?? 'General' }}"
-                         style="background:white; border-radius:14px; padding:16px; display:flex; align-items:center; gap:16px; border:2px solid #ccfbf1; cursor:pointer; transition:all 0.2s;">
-
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($doctor->user->name) }}&background=0d9488&color=fff&size=64&rounded=true"
-                             style="width:64px; height:64px; border-radius:50%; flex-shrink:0;">
+                    data-clinic="{{ $doctor->clinic_id }}"
+                    data-id="{{ $doctor->id }}"
+                    data-name="{{ $doctor->user->name }}"
+                    data-spec="{{ $doctor->specialization ?? 'General' }}"
+                    style="
+                        background:white;
+                        border-radius:14px;
+                        padding:16px;
+                        display:flex;
+                        align-items:center;
+                        gap:16px;
+                        border:2px solid #ccfbf1;
+                        cursor:pointer;
+                        transition:all 0.2s;
+                    ">
+                        <img src="{{ asset('images/doctors/' . strtolower(explode(' ', $doctor->user->name)[0]) . '.jpg') }}"
+                            style="width:64px; height:64px; border-radius:50%; object-fit:cover; flex-shrink:0;">
 
                         <div style="flex:1;">
                             <h4 style="font-size:16px; font-weight:700; color:#0f172a; margin-bottom:2px;">Dr. {{ $doctor->user->name }}</h4>
                             <p style="color:#0d9488; font-size:13px; font-weight:500; margin-bottom:4px;">{{ $doctor->specialization ?? 'General Practitioner' }}</p>
-                            <p style="color:#6b7280; font-size:12px; margin-bottom:2px;"><i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>{{ $doctor->clinic_location ?? 'MediSlot Clinic' }}</p>
+                            <p style="color:#6b7280; font-size:12px; margin-bottom:2px;"><i class="fa-solid fa-location-dot" style="margin-right:4px;"></i>{{ $doctor->clinic->name ?? 'No Clinic Assigned' }}</p>
                             <p style="color:#6b7280; font-size:12px;"><i class="fa-regular fa-clock" style="margin-right:4px;"></i>{{ $doctor->availability ?? 'Mon-Fri 9am-5pm' }}</p>
                         </div>
 
@@ -60,13 +76,31 @@
                 </div>
             </div>
 
-            {{-- Right: Booking Form --}}
             <div>
                 <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; position:sticky; top:24px;">
                     <h3 style="font-size:16px; font-weight:700; color:#0f172a; margin-bottom:20px;">Appointment Details</h3>
 
                     <form method="POST" action="{{ route('patient.book.store') }}">
                         @csrf
+                    {{-- Right: Booking Form --}}
+                    <div class="mb-4">
+                        <label class="block mb-2">Clinic</label>
+
+                        <select id="clinicSelect" name="clinic_id"
+                        name="clinic_id"
+                                class="w-full border rounded p-2">
+
+                            <option value="" disabled selected>
+                                Select Clinic
+                            </option>
+
+                            @foreach($clinics as $clinic)
+                                <option value="{{ $clinic->id }}">
+                                    {{ $clinic->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                         <input type="hidden" name="doctor_id" id="selected_doctor_id">
 
                         {{-- Selected Doctor --}}
@@ -133,7 +167,7 @@
     <footer style="background:#0f172a; padding:24px 2rem; margin-top:48px;">
         <div style="max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
             <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:18px; color:#2dd4bf;">✚</span>
+                <svg width="28" height="28" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="44" height="44" rx="10" fill="#0d9488"/><path d="M22 34s-14-9-14-18a8 8 0 0 1 14-5.3A8 8 0 0 1 36 16c0 9-14 18-14 18z" fill="white"/><polyline points="8,22 14,22 17,16 20,28 23,20 26,24 30,24 36,24" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span style="font-size:16px; font-weight:700; color:white;">Medi<span style="color:#2dd4bf;">Slot</span></span>
             </div>
             <p style="color:#475569; font-size:13px;">© {{ date('Y') }} MediSlot. All rights reserved.</p>
@@ -186,7 +220,6 @@
 
                 card.style.borderColor = '#0d9488';
                 card.querySelector('.check-inner').style.display = 'block';
-
                 document.getElementById('selected_doctor_id').value = card.dataset.id;
                 document.getElementById('selected-doctor-name').textContent = 'Dr. ' + card.dataset.name;
                 document.getElementById('selected-doctor-spec').textContent = card.dataset.spec;
@@ -201,6 +234,22 @@
                 document.getElementById('selected_time').value = '';
 
                 updateTimeSlots(card.dataset.id);
+                // Auto select clinic
+                document.getElementById('clinicSelect').value =
+                    card.dataset.clinic;
+
+                // Show only doctors from same clinic
+                document.querySelectorAll('.doctor-card')
+                    .forEach(c => {
+
+                    if (
+                        c.dataset.clinic == card.dataset.clinic
+                    ) {
+                        c.style.display = 'flex';
+                    } else {
+                        c.style.display = 'none';
+                    }
+                });
             });
         });
 
@@ -211,10 +260,48 @@
                 btn.style.borderColor = '#e2e8f0';
             });
             const btn = document.querySelector(`[data-time="${time}"]`);
+            if (!btn) return;
             btn.style.background = '#0d9488';
             btn.style.color = 'white';
             btn.style.borderColor = '#0d9488';
             document.getElementById('selected_time').value = time;
         }
-    </script>
+
+        // Clinic selection -> filter doctors
+        document.getElementById('clinicSelect')
+            .addEventListener('change', function () {
+
+            let clinicId = this.value;
+
+            // Reset selected doctor
+            document.getElementById('selected_doctor_id').value = '';
+
+            document.getElementById('selected-doctor-display').style.display =
+                'none';
+
+            document.getElementById('no-doctor-msg').style.display =
+                'block';
+
+            document.querySelectorAll('.doctor-card')
+                .forEach(card => {
+
+                card.style.borderColor = '#ccfbf1';
+
+                const check =
+                    card.querySelector('.check-inner');
+
+                if (check) {
+                    check.style.display = 'none';
+                }
+
+                // Show only doctors from selected clinic
+                if (!clinicId || card.dataset.clinic == clinicId) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        </script>
 </x-app-layout>

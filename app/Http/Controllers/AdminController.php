@@ -211,4 +211,48 @@ class AdminController extends Controller
             $clinic->delete();
             return back()->with('success', 'Clinic deleted.');
         }
-            }
+
+        public function reassignForm(Appointment $appointment)
+{
+    $doctors = Doctor::all();
+
+    return view('admin.reassign', compact('appointment', 'doctors'));
+}
+
+    public function reassign(Request $request, Appointment $appointment)
+    {
+        $request->validate([
+            'doctor_id' => 'required|exists:doctors,id',
+        ]);
+
+        $appointment->doctor_id = $request->doctor_id;
+        $appointment->save();
+
+        return redirect()->route('admin.appointments')
+            ->with('success', 'Appointment reassigned successfully.');
+    }
+
+    public function toggleDoctorStatus(Doctor $doctor)
+    {
+        $doctor->status =
+            $doctor->status === 'active'
+            ? 'inactive'
+            : 'active';
+
+        $doctor->save();
+
+        return back()->with('success', 'Doctor status updated.');
+    }
+
+    public function togglePatientStatus(Patient $patient)
+    {
+        $patient->status =
+            $patient->status === 'active'
+            ? 'inactive'
+            : 'active';
+
+        $patient->save();
+
+        return back()->with('success', 'Patient status updated.');
+    }
+}

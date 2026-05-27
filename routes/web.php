@@ -65,6 +65,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/doctors/create', [AdminController::class, 'storeDoctor'])->name('admin.doctor.store');
     Route::get('/patients/create', [AdminController::class, 'createPatient'])->name('admin.patient.create');
     Route::post('/patients/create', [AdminController::class, 'storePatient'])->name('admin.patient.store');
+    Route::get('/appointments/{appointment}/reassign', [AdminController::class, 'reassignForm'])->name('admin.reassign.form');
+    Route::post('/appointments/{appointment}/reassign', [AdminController::class, 'reassign'])->name('admin.reassign');
+    Route::post('/doctor/{doctor}/toggle-status', [AdminController::class, 'toggleDoctorStatus'])->name('admin.doctor.toggle');
+    Route::post('/patient/{patient}/toggle-status', [AdminController::class, 'togglePatientStatus'])->name('admin.patient.toggle');
 });
 
 // Clinic management routes for admin

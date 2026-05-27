@@ -19,11 +19,17 @@ class PatientController extends Controller
 
     public function book()
     {
-        $doctors = Doctor::with('user')->get();
-        $doctorAvailability = $doctors->mapWithKeys(function ($doctor) {
+    $doctors = Doctor::with('user')->where('status', 'active')->get();        
+    $doctorAvailability = $doctors->mapWithKeys(function ($doctor) {
             return [$doctor->id => $doctor->availability];
         });
-        return view('patient.book', compact('doctors', 'doctorAvailability'));
+    $clinics = Clinic::all();
+
+    return view('patient.book', compact(
+        'doctors',
+        'doctorAvailability',
+        'clinics'
+    ));    
     }
 
     public function appointments()
@@ -66,6 +72,7 @@ class PatientController extends Controller
     public function storeBooking(Request $request)
     {
         $request->validate([
+            'clinic_id' => 'required|exists:clinics,id',
             'doctor_id'        => 'required|exists:doctors,id',
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required',
@@ -73,6 +80,16 @@ class PatientController extends Controller
 
         // Check availability
         $doctor = Doctor::find($request->doctor_id);
+        if ($doctor->clinic_id != $request->clinic_id) {
+            return back()->withErrors([
+                'doctor_id' => 'Selected doctor does not belong to this clinic.'
+            ])->withInput();
+        }
+        if ($doctor->status !== 'active') {
+            return back()->withErrors([
+            'doctor_id' => 'This doctor is currently inactive.'
+            ])->withInput();
+        }
         if ($doctor && $doctor->availability) {
             preg_match('/(\d+)(am|pm)-(\d+)(am|pm)/i', str_replace(' ', '', $doctor->availability), $matches);
             if ($matches) {
@@ -104,9 +121,9 @@ class PatientController extends Controller
             return back()->withErrors(['appointment_time' => 'This time slot is already booked. Please choose another.'])->withInput();
         }
 
-        $patient = auth()->user()->patient;
+        $patient = Auth::user()->patient;
         if (!$patient) {
-            $patient = Patient::create(['user_id' => auth()->id()]);
+            $patient = Patient::create(['user_id' => Auth::id()]);
         }
 
         Appointment::create([
