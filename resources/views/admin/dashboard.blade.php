@@ -62,6 +62,28 @@
             </div>
         </div>
 
+        {{-- Charts Row --}}
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:28px;">
+
+            {{-- Line Chart --}}
+            <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
+                <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">📈 Appointments This Week</h3>
+                <canvas id="lineChart"></canvas>
+            </div>
+
+            {{-- Bar Chart --}}
+            <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
+                <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">📊 Appointments by Status</h3>
+                <canvas id="barChart"></canvas>
+            </div>
+
+            {{-- Doughnut Chart --}}
+            <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
+                <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">🍩 Users by Role</h3>
+                <canvas id="doughnutChart"></canvas>
+            </div>
+
+        </div>
         {{-- Quick Links + Recent --}}
         <div style="display:grid; grid-template-columns:1fr 2fr; gap:24px;">
 
@@ -168,5 +190,74 @@
             <p style="color:#475569; font-size:13px;">Admin Portal</p>
         </div>
     </footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Line Chart
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($weekLabels) !!},
+            datasets: [{
+                label: 'Appointments',
+                data: {!! json_encode($weekData) !!},
+                borderColor: '#0d9488',
+                backgroundColor: 'rgba(13,148,136,0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#0d9488',
+                pointRadius: 5,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { labels: { color: '#6b7280' } } },
+            scales: {
+                x: { ticks: { color: '#6b7280' }, grid: { color: '#f0fdfa' } },
+                y: { ticks: { color: '#6b7280' }, grid: { color: '#f0fdfa' }, beginAtZero: true }
+            }
+        }
+    });
+
+    // Bar Chart
+    new Chart(document.getElementById('barChart'), {
+        type: 'bar',
+        data: {
+            labels: ['Pending', 'Confirmed', 'Cancelled'],
+            datasets: [{
+                label: 'Appointments',
+                data: {!! json_encode([$pendingCount, $confirmedCount, $cancelledCount]) !!},
+                backgroundColor: ['#fbbf24', '#10b981', '#ef4444'],
+                borderRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { ticks: { color: '#6b7280' }, grid: { color: '#f0fdfa' } },
+                y: { ticks: { color: '#6b7280' }, grid: { color: '#f0fdfa' }, beginAtZero: true }
+            }
+        }
+    });
+
+    // Doughnut Chart
+    new Chart(document.getElementById('doughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Patients', 'Doctors', 'Admins'],
+            datasets: [{
+                data: {!! json_encode([$totalPatients, $totalDoctors, 1]) !!},
+                backgroundColor: ['#0d9488', '#1e40af', '#a855f7'],
+                borderWidth: 0,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { labels: { color: '#6b7280' } } }
+        }
+    });
+</script>
+
 
 </x-app-layout>

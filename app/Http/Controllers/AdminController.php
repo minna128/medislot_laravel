@@ -8,6 +8,7 @@ use App\Models\Doctor;
 use App\Models\Patient;
 use App\Models\User;
 use App\Models\Clinic;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
@@ -18,9 +19,23 @@ class AdminController extends Controller
         $totalPatients     = Patient::count();
         $totalAppointments = Appointment::count();
         $pendingCount      = Appointment::where('status', 'pending')->count();
+        $confirmedCount    = Appointment::where('status', 'confirmed')->count();
+        $cancelledCount    = Appointment::where('status', 'cancelled')->count();
         $totalClinics      = Clinic::count();
+
+        // Week data for line chart
+        $weekLabels = [];
+        $weekData   = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date         = now()->subDays($i);
+            $weekLabels[] = $date->format('D');
+            $weekData[]   = Appointment::whereDate('created_at', $date->toDateString())->count();
+        }
+
         return view('admin.dashboard', compact(
-            'totalDoctors', 'totalPatients', 'totalAppointments', 'pendingCount', 'totalClinics'
+            'totalDoctors', 'totalPatients', 'totalAppointments',
+            'pendingCount', 'confirmedCount', 'cancelledCount',
+            'totalClinics', 'weekLabels', 'weekData'
         ));
     }
 
