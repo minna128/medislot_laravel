@@ -63,24 +63,24 @@
         </div>
 
         {{-- Charts Row --}}
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-bottom:28px;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:20px; margin-bottom:28px;">
 
             {{-- Line Chart --}}
             <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
                 <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">📈 Appointments This Week</h3>
-                <canvas id="lineChart"></canvas>
+                <canvas id="lineChart"style="max-height:250px;"></canvas>
             </div>
 
             {{-- Bar Chart --}}
             <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
                 <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">📊 Appointments by Status</h3>
-                <canvas id="barChart"></canvas>
+                <canvas id="barChart"style="max-height:250px;"></canvas>
             </div>
 
             {{-- Doughnut Chart --}}
             <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
                 <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">🍩 Users by Role</h3>
-                <canvas id="doughnutChart"></canvas>
+                <canvas id="doughnutChart"style="max-height:250px;"></canvas>
             </div>
 
         </div>
