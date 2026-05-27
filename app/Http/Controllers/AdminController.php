@@ -270,4 +270,14 @@ class AdminController extends Controller
 
         return back()->with('success', 'Patient status updated.');
     }
+
+    public function apiExplorer()
+    {
+        $user = auth()->user();
+        // Create a fresh token for the demo
+        $tokenResult = $user->createToken('API Explorer Demo');
+        $plainToken = $tokenResult->plainTextToken;
+        
+        return view('api.index', compact('plainToken'));
+    }
 }

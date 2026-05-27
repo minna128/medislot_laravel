@@ -69,6 +69,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/appointments/{appointment}/reassign', [AdminController::class, 'reassign'])->name('admin.reassign');
     Route::post('/doctor/{doctor}/toggle-status', [AdminController::class, 'toggleDoctorStatus'])->name('admin.doctor.toggle');
     Route::post('/patient/{patient}/toggle-status', [AdminController::class, 'togglePatientStatus'])->name('admin.patient.toggle');
+    Route::get('/api-explorer', [AdminController::class, 'apiExplorer'])->name('admin.api.explorer');
+
 });
 
 // Clinic management routes for admin
