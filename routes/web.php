@@ -6,6 +6,11 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\AdminController;
 
+// Fix for Livewire in XAMPP subfolder
+\Livewire\Livewire::setUpdateRoute(function ($handle) {
+    return Route::post('/livewire/update', $handle);
+});
+
 
 Route::get('/', function () {
     return view('welcome');

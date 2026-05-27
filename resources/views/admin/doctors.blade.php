@@ -11,6 +11,12 @@
             </div>
         @endif
 
+        {{-- Livewire Doctor Search --}}
+        <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; margin-bottom:24px;">
+            <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">🔍 Live Doctor Search</h3>
+            @livewire('doctor-search')
+        </div>
+        
         <div style="background:white; border-radius:14px; padding:28px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08);">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
                 <h3 style="font-size:18px; font-weight:700; color:#0f172a;">All Doctors</h3>

@@ -21,6 +21,12 @@
             </div>
         @endif
 
+        {{-- Livewire Patient Search --}}
+        <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; margin-bottom:24px;">
+            <h3 style="font-size:15px; font-weight:700; color:#0f172a; margin-bottom:16px;">🔍 Live Patient Search</h3>
+            @livewire('patient-search')
+        </div>
+
         <div style="
             background:white;
             border-radius:14px;
