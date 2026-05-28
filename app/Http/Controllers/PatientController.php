@@ -127,13 +127,14 @@ class PatientController extends Controller
         }
 
         Appointment::create([
-            'patient_id'       => $patient->id,
-            'doctor_id'        => $request->doctor_id,
-            'appointment_date' => $request->appointment_date,
-            'appointment_time' => $request->appointment_time,
-            'notes'            => $request->notes,
-            'status'           => 'pending',
-        ]);
+        'patient_id'       => $patient->id,
+        'doctor_id'        => $request->doctor_id,
+        'clinic_id'        => $request->clinic_id,
+        'appointment_date' => $request->appointment_date,
+        'appointment_time' => $request->appointment_time,
+        'notes'            => $request->notes,
+        'status'           => 'pending',
+    ]);
 
         return redirect()->route('patient.book')->with('success', 'Appointment booked successfully!');
     }

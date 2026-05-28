@@ -11,7 +11,7 @@ class Doctor extends Model
 {
     protected $fillable = [
         'user_id', 'specialization', 'qualifications',
-        'clinic_location', 'phone', 'availability'
+        'clinic_location', 'phone', 'availability', 'status', 'clinic_id'
     ];
 
     public function user()

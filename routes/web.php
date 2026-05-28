@@ -75,13 +75,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::post('/doctor/{doctor}/toggle-status', [AdminController::class, 'toggleDoctorStatus'])->name('admin.doctor.toggle');
     Route::post('/patient/{patient}/toggle-status', [AdminController::class, 'togglePatientStatus'])->name('admin.patient.toggle');
     Route::get('/api-explorer', [AdminController::class, 'apiExplorer'])->name('admin.api.explorer');
-
-});
-
-// Clinic management routes for admin
+    // Clinic management routes for admin
     Route::get('/clinics', [AdminController::class, 'clinics'])->name('admin.clinics');
     Route::get('/clinics/create', [AdminController::class, 'createClinic'])->name('admin.clinic.create');
     Route::post('/clinics/create', [AdminController::class, 'storeClinic'])->name('admin.clinic.store');
     Route::get('/clinics/{clinic}/edit', [AdminController::class, 'editClinic'])->name('admin.clinic.edit');
     Route::post('/clinics/{clinic}/edit', [AdminController::class, 'updateClinic'])->name('admin.clinic.update');
     Route::delete('/clinics/{clinic}', [AdminController::class, 'deleteClinic'])->name('admin.clinic.delete');
+
+});
+
