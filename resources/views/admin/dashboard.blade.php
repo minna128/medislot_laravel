@@ -23,7 +23,7 @@
     <div style="max-width:1200px; margin:0 auto; padding:32px 2rem;">
 
         {{-- Stats Row --}}
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:28px;">
+        <div class="stats-grid" style="display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:28px;">
             <div style="background:white; border-radius:14px; padding:24px; border:1px solid #ccfbf1; box-shadow:0 2px 8px rgba(13,148,136,0.08); display:flex; align-items:center; gap:16px;">
                 <div style="width:52px; height:52px; background:#f0fdfa; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                     <i class="fa-solid fa-user-doctor" style="color:#0d9488; font-size:22px;"></i>
@@ -68,7 +68,7 @@
         </div>
 
         {{-- Quick Actions + Charts + Live Filter --}}
-        <div style="display:grid; grid-template-columns:1fr 2fr; gap:24px;">
+        <div class="dashboard-grid" style="display:grid; grid-template-columns:1fr 2fr; gap:24px;">
 
             {{-- Left: Quick Actions --}}
             <div style="background:white; border-radius:14px; padding:20px; border:1px solid #ccfbf1;">
@@ -109,7 +109,7 @@
             <div style="display:flex; flex-direction:column; gap:20px;">
 
                 {{-- Charts --}}
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+                <div class="charts-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
                     <div wire:ignore style="background:white; border-radius:14px; padding:20px; border:1px solid #ccfbf1;">
                         <h3 style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px;">📈 This Week</h3>
                         <canvas id="lineChart" style="max-height:180px;"></canvas>
@@ -211,5 +211,13 @@
         }
     });
 </script>
+
+<style>
+@media (max-width: 768px) {
+    .dashboard-grid { grid-template-columns: 1fr !important; }
+    .charts-grid { grid-template-columns: 1fr !important; }
+    .stats-grid { grid-template-columns: repeat(2,1fr) !important; }
+}
+</style>
 
 </x-app-layout>
