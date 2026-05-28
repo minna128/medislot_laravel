@@ -64,7 +64,7 @@
                 {{-- Request Headers Display --}}
                 <div class="mb-3">
                     <p class="text-xs font-semibold mb-2" style="color:#94a3b8;">REQUEST HEADERS SENT:</p>
-                    <pre class="rounded-lg p-3 text-xs" style="background:#1e293b; color:#a78bfa; min-height:60px;" id="headersDisplay">Click a button to see headers...</pre>
+                    <pre class="rounded-lg p-3 text-xs" style="background:#1e293b; color:#a78bfa; min-height:60px; white-space:pre-wrap; word-wrap:break-word;" id="headersDisplay">Click a button to see headers...</pre>
                 </div>
 
                 {{-- Response Display --}}
@@ -73,7 +73,7 @@
                         <p class="text-xs font-semibold" style="color:#94a3b8;">RESPONSE:</p>
                         <span id="statusBadge" class="text-xs px-2 py-1 rounded font-mono" style="background:#1e293b; color:#94a3b8;">—</span>
                     </div>
-                    <pre class="rounded-lg p-3 text-xs overflow-auto" style="background:#1e293b; color:#34d399; min-height:120px; max-height:300px;" id="responseDisplay">Response will appear here...</pre>
+                    <pre class="rounded-lg p-3 text-xs" style="background:#1e293b; color:#34d399; min-height:120px; max-height:300px; overflow:auto; white-space:pre-wrap; word-wrap:break-word; word-break:break-all;" id="responseDisplay">Response will appear here...</pre>
                 </div>
             </div>
 
@@ -130,12 +130,13 @@
                 };
 
                 // Show headers being sent
-                document.getElementById('headersDisplay').textContent = JSON.stringify(headers, null, 2).replace(token, token.substring(0, 20) + '...[truncated]');
+                document.getElementById('headersDisplay').textContent = 
+                JSON.stringify(headers, null, 2).replace(token, token.substring(0, 20) + '...[truncated]');
 
                 try {
                     const response = await axios({
                         method,
-                        url: '{{ url('') }}' + endpoint,
+                        url: "{{ url('') }}" + endpoint,
                         headers
                     });
 
