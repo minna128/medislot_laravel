@@ -11,7 +11,7 @@
                 No clinics available yet.
             </div>
         @else
-            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:24px;">
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:24px;">
                 @foreach($clinics as $clinic)
                 <div style="background:white; border-radius:16px; overflow:hidden; border:1px solid #ccfbf1; box-shadow:0 4px 16px rgba(13,148,136,0.08);">
                     <div style="background:linear-gradient(135deg,#0f172a,#0d9488); padding:24px; text-align:center;">
